@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank the Most Streamed Rappers</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .ranking-system, .rapper-info {
+            width: 45%;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .rapper-info {
+            background-color: #ffffff;
+            border: 2px solid #ddd;
+        }
+        .rapper-info h2 {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        .results {
+            margin-top: 10px;
+            font-weight: bold;
+            color: red;
+        }
+        .success-message {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: green;
+        }
+        .ranking-list {
+            list-style: none;
+            padding: 0;
+        }
+        .ranking-list li {
+            background: #e0e0e0;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: grab;
+        }
+        .recommendation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffeb3b;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Page 1: Rapper Info -->
+<div id="page1" class="page active">
+    <h1>Rank the Most Streamed Spotify HipHop Artists</h1>
+    <p>The top 5 most streamed rappers reflect the diversity and evolution of modern hip-hop. Their influence spans across music, fashion, and culture.</p>
+
+    <div class="rapper-info">
+        <h2>1. Drake</h2>
+        <p><strong>Streams and Influence:</strong> Drake is the most streamed rapper of all time. Hits like *God's Plan* and *In My Feelings* have earned billions of streams globally.</p>
+        <p><strong>Why He's Dominant:</strong> His genre-blending style appeals to fans of rap, R&B, and pop alike.</p>
+        <p><strong>How He’s Evolved:</strong> With chart-topping albums like *Scorpion* and *Certified Lover Boy*, Drake continues to dominate the streaming era.</p>
+    </div>
+
+    <div class="rapper-info">
+        <h2>2. Travis Scott</h2>
+        <p><strong>Streams and Influence:</strong> Known for his immersive sound and viral concerts, Travis Scott has cemented his place among the top rappers with hits like *Sicko Mode* and *Goosebumps*.</p>
+        <p><strong>Why He’s Dominant:</strong> His cultural collaborations with brands like Nike and his *Astroworld* festival have amplified his appeal.</p>
+        <p><strong>How He’s Evolved:</strong> Travis pushes boundaries with innovative visuals and collaborations, making him a modern rap icon.</p>
+    </div>
+
+    <div class="rapper-info">
+        <h2>3. 21 Savage</h2>
+        <p><strong>Streams and Influence:</strong> Known for his introspective lyrics and distinct delivery, 21 Savage has earned his spot with tracks like *A Lot* and *Bank Account*.</p>
+        <p><strong>Why He’s Dominant:</strong> His authenticity and powerful collaborations have connected with a loyal audience.</p>
+        <p><strong>How He’s Evolved:</strong> Albums like *I Am > I Was* show his growth as a storyteller in modern rap.</p>
+    </div>
+
+    <div class="rapper-info">
+        <h2>4. Ty Dolla $ign</h2>
+        <p><strong>Streams and Influence:</strong> A versatile rapper and vocalist, Ty Dolla $ign has contributed to countless hits, blending his talent into both solo and collaborative tracks.</p>
+        <p><strong>Why He’s Dominant:</strong> His smooth style and collaborations make him a constant presence on streaming charts.</p>
+        <p><strong>How He’s Evolved:</strong> His mix of R&B and rap continues to resonate with fans across genres.</p>
+    </div>
+
+    <div class="rapper-info">
+        <h2>5. Lil Nas X</h2>
+        <p><strong>Streams and Influence:</strong> Lil Nas X took the world by storm with *Old Town Road*, and his music continues to push boundaries in hip-hop and pop.</p>
+        <p><strong>Why He’s Dominant:</strong> His bold personality and genre-defying music have made him a streaming powerhouse.</p>
+        <p><strong>How He’s Evolved:</strong> With hits like *MONTERO (Call Me By Your Name)*, he continues to innovate and challenge norms in the music industry.</p>
+    </div>
+
+    <button onclick="showRankingPage()">Go to Ranking & Recommendations</button>
+</div>
+
+<!-- Page 2: Ranking and Recommendations -->
+<div id="page2" class="page" style="display:none;">
+    <h2>Do you agree with this ranking?</h2>
+    <input type="text" id="userOpinion" placeholder="Enter your thoughts">
+    <button onclick="saveOpinion()">Save Opinion</button>
+    <p id="opinionSavedMessage"></p>
+
+    <div class="container">
+        <div class="ranking-system">
+            <h2>Most Streamed Rappers</h2>
+            <p>Select the correct position for each rapper:</p>
+            <div id="userRapperList"></div>
+            <button onclick="checkSystemRanking()">Confirm Order</button>
+            <div id="systemResults" class="results"></div>
+        </div>
+
+        <div class="ranking-system">
+            <h2>Your Opinion</h2>
+            <p>Select the position based on your opinion:</p>
+            <div id="correctRapperList"></div>
+            <button onclick="checkUserRanking()">Confirm Order</button>
+            <div id="userResults" class="results"></div>
+        </div>
+    </div>
+
+    <div class="recommendation">
+        <h2>Recommendations based on Your Opinion</h2>
+        <p id="recommendationMessage"></p>
+    </div>
+
+    <h2>Your Thoughts on Hip-Hop Rankings:</h2>
+    <form id="pollForm" onsubmit="submitPoll(event)">
+        <label for="userName">Name:</label><br>
+        <input type="text" id="userName" required><br><br>
+        <label for="favoriteRapper">Favorite Rapper:</label><br>
+        <select id="favoriteRapper" required>
+            <option value="">Select a rapper</option>
+            <option value="Drake">Drake</option>
+            <option value="Travis Scott">Travis Scott</option>
+            <option value="21 Savage">21 Savage</option>
+            <option value="Ty Dolla $ign">Ty Dolla $ign</option>
+            <option value="Lil Nas X">Lil Nas X</option>
+        </select><br><br>
+        <label for="rating">Rate the Top 5 Ranking:</label><br>
+        <input type="number" id="rating" min="1" max="5" required><br><br>
+        <label for="additionalComments">Any Comments?</label><br>
+        <textarea id="additionalComments" rows="4" cols="50"></textarea><br><br>
+        <button type="submit">Submit Poll</button>
+    </form>
+    <button onclick="showChartsPage()">Go to Charts</button>
+    <button onclick="showPage1()">Previous Page</button> <!-- Added Previous Button -->
+</div>
+
+<!-- Page 3: Charts -->
+<div id="page3" class="page" style="display:none;">
+    <h1>Duration of Top 10 Most Popular Tracks</h1>
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <h1>Track Popularity by Duration</h1>
+    <canvas id="myPieChart" width="400" height="400"></canvas>
+
+    <button onclick="showRankingPage()">Go to Ranking & Recommendations</button>
+    <button onclick="showPage2()">Previous Page</button> <!-- Added Previous Button -->
+</div>
+
+<script>
+    const rappers = ["Travis Scott", "Ty Dolla $ign", "21 Savage", "Lil Nas X", "Drake"];
+    const correctOrder = ["Drake", "Travis Scott", "21 Savage", "Ty Dolla $ign", "Lil Nas X"];
+
+    function createRapperLists() {
+        rappers.forEach((rapper, i) => {
+            document.getElementById('userRapperList').innerHTML += 
+                `<div>
+                    <p>${rapper}</p>
+                    <select id="user-rapper-${i}">
+                        <option value="">Select Position</option>
+                        ${Array.from({ length: 5 }, (_, j) => `<option value="${j + 1}">${j + 1}</option>`).join('')}
+                    </select>
+                </div>`;
+            document.getElementById('correctRapperList').innerHTML += 
+                `<div>
+                    <p>${rapper}</p>
+                    <select id="correct-rapper-${i}">
+                        <option value="">Select Position</option>
+                        ${Array.from({ length: 5 }, (_, j) => `<option value="${j + 1}">${j + 1}</option>`).join('')}
+                    </select>
+                </div>`;
+        });
+    }
+    createRapperLists();
+
+    function checkSystemRanking() {
+        let results = "";
+        rappers.forEach((rapper, i) => {
+            let userSelected = document.getElementById(`user-rapper-${i}`).value;
+            let correctPosition = correctOrder.indexOf(rapper) + 1;
+            if (userSelected != correctPosition) {
+                results += `<p>${rapper} is incorrect!</p>`;
+            }
+        });
+        document.getElementById('systemResults').innerHTML = results || `<p class='success-message'>Correct Order!</p>`;
+    }
+
+    function checkUserRanking() {
+        let results = "";
+        rappers.forEach((rapper, i) => {
+            let userSelected = document.getElementById(`correct-rapper-${i}`).value;
+            if (!userSelected) {
+                results += `<p>${rapper} has no position selected!</p>`;
+            }
+        });
+        document.getElementById('userResults').innerHTML = results || `<p class='success-message'>Your opinion is recorded!</p>`;
+    }
+
+    function saveOpinion() {
+        let opinion = document.getElementById("userOpinion").value;
+        localStorage.setItem("userOpinion", opinion);
+        document.getElementById("opinionSavedMessage").innerText = "Your opinion has been saved!";
+    }
+
+    function showRankingPage() {
+        document.getElementById("page1").style.display = "none";
+        document.getElementById("page2").style.display = "block";
+    }
+
+    function showChartsPage() {
+        document.getElementById("page2").style.display = "none";
+        document.getElementById("page3").style.display = "block";
+    }
+
+    function showPage1() {
+        document.getElementById("page2").style.display = "none";
+        document.getElementById("page1").style.display = "block"; // Previous page button functionality
+    }
+
+    function showPage2() {
+        document.getElementById("page3").style.display = "none";
+        document.getElementById("page2").style.display = "block"; // Previous page button functionality
+    }
+
+    function showRecommendation() {
+        const opinion = localStorage.getItem("userOpinion");
+        const recommendationMessage = opinion ? 
+            `Based on your opinion: "${opinion}", we recommend checking out more of Drake's works.` : 
+            "Please share your opinion to get a personalized recommendation.";
+        document.getElementById("recommendationMessage").innerText = recommendationMessage;
+    }
+
+    showRecommendation();
+
+    const ctxBar = document.getElementById('myChart').getContext('2d');
+
+    const trackData = [
+        { name: "Rich Baby Daddy (Drake)", duration: 319.191 },
+        { name: "One Dance (Drake)", duration: 173.986 },
+        { name: "IDGAF (Drake)", duration: 260.111 },
+        { name: "First Person Shooter (Drake)", duration: 247.444 },
+        { name: "Jimmy Cooks (Drake)", duration: 218.364 },
+        { name: "Circles (Post Malone)", duration: 215.28 },
+        { name: "God's Plan (Drake)", duration: 198.973 },
+        { name: "Sunflower (Post Malone)", duration: 157.56 },
+        { name: "FTCU (Nicki Minaj)", duration: 172.137 },
+        { name: "Dial Drunk (Noah Kahan)", duration: 142.099 }
+    ];
+
+    new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+        labels: trackData.map(track => track.name),
+        datasets: [{
+            label: 'Duration of Tracks (in seconds)',
+            data: trackData.map(track => track.duration),
+            backgroundColor: [
+                '#ff5733', '#33ff57', '#3357ff', '#ff33d1', '#d1ff33', 
+                '#33d1ff', '#ff33ff', '#5733ff', '#d133ff', '#ff5733'
+            ],
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+    const ctxPie = document.getElementById('myPieChart').getContext('2d');
+
+    new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: trackData.map(track => track.name),
+            datasets: [{
+                label: 'Track Popularity by Duration',
+                data: trackData.map(track => track.duration),
+                backgroundColor: ['#ff5733', '#33ff57', '#3357ff', '#ff33d1', '#d1ff33', '#33d1ff', '#ff33ff', '#5733ff', '#d133ff', '#ff5733'],
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+
+</body>
+</html>
